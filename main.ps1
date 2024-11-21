@@ -109,7 +109,7 @@ function Install-NetExtender {
     #         Write-Error "The provided EXE installer path does not exist: $NetExtenderExePath"
     #         exit 1
     #     }
-    # }
+    }
 }
 
 # Main Script Execution
