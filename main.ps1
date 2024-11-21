@@ -91,24 +91,25 @@ function Remove-NeDriver {
 # Function to install NetExtender
 function Install-NetExtender {
     if (!$InstallEXE) {
+        $fullPath = Resolve-Path $NetExtenderMsiPath
         Write-Host "Installing the MSI version of SonicWALL NetExtender from $NetExtenderMsiPath"
-        if (Test-Path $NetExtenderMsiPath) {
-            Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $NetExtenderMsiPath /passive /norestart" -Wait
+        if (Test-Path $fullPath) {
+            Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $fullPath /quiet /norestart" -Wait
             Write-Host "MSI installation complete."
         } else {
             Write-Error "The provided MSI installer path does not exist: $NetExtenderMsiPath"
             exit 1
         }
     } else {
-        Write-Host "Installing the EXE version of SonicWALL NetExtender from $NetExtenderExePath"
-        if (Test-Path $NetExtenderExePath) {
-            Start-Process -FilePath $NetExtenderExePath -ArgumentList "/S" -Wait
-            Write-Host "EXE installation complete."
-        } else {
-            Write-Error "The provided EXE installer path does not exist: $NetExtenderExePath"
-            exit 1
-        }
-    }
+    #     Write-Host "Installing the EXE version of SonicWALL NetExtender from $NetExtenderExePath"
+    #     if (Test-Path $NetExtenderExePath) {
+    #         Start-Process -FilePath $NetExtenderExePath -ArgumentList "/S" -Wait
+    #         Write-Host "EXE installation complete."
+    #     } else {
+    #         Write-Error "The provided EXE installer path does not exist: $NetExtenderExePath"
+    #         exit 1
+    #     }
+    # }
 }
 
 # Main Script Execution
