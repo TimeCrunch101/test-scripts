@@ -3,8 +3,7 @@ $NetExtenderMsiPath = ".\NetExtender-x64-10.2.341.msi" # Path to the MSI install
 $NetExtenderExePath = ".\NXSetupU-x64-10.2.341.exe"    # Path to the EXE installer
 $NetExtenderProcessName = "NEGui"                     # Process name of SonicWALL NetExtender
 $NetExtenderProductName = "SonicWALL NetExtender"     # Display name in Programs and Features
-$MsiInstalled = $false
-$InstallEXE = $false
+$InstallEXE = $true
 
 # Function to uninstall NetExtender
 function Uninstall-NetExtender {
@@ -18,7 +17,6 @@ function Uninstall-NetExtender {
     if ($InstalledApps) {
         foreach ($App in $InstalledApps) {
             if ($App.PSChildName -match "^{.+}$") { # Check if PSChildName is a GUID
-                $MsiInstalled = $true
                 Write-Host "Uninstalling $($App.DisplayName) (Version: $($App.DisplayVersion))"
                 Start-Process -FilePath "msiexec.exe" -ArgumentList "/uninstall $($App.PSChildName) /quiet /norestart" -Wait
             } else {
@@ -39,17 +37,15 @@ function Uninstall-NetExtender {
     }
 
     # Look for EXE-based uninstaller
-    if (!$MsiInstalled) {
-        $UninstallerPath = Get-ChildItem -Path "C:\Program Files (x86)\SonicWall\SSL-VPN\NetExtender" -Recurse -ErrorAction SilentlyContinue |
-                           Where-Object { $_.Name -like "uninst.exe" } |
-                           Select-Object -ExpandProperty FullName -First 1
+    $UninstallerPath = Get-ChildItem -Path "C:\Program Files (x86)\SonicWall\SSL-VPN\NetExtender" -Recurse -ErrorAction SilentlyContinue |
+                        Where-Object { $_.Name -like "uninst.exe" } |
+                        Select-Object -ExpandProperty FullName -First 1
 
-        if ($UninstallerPath) {
-            Write-Host "Uninstalling EXE-based SonicWALL NetExtender..."
-            Start-Process -FilePath $UninstallerPath -ArgumentList "/quiet" -Wait
-        } else {
-            Write-Host "No EXE-based uninstaller found."
-        }
+    if ($UninstallerPath) {
+        Write-Host "Uninstalling EXE-based SonicWALL NetExtender..."
+        Start-Process -FilePath $UninstallerPath -ArgumentList "/quiet" -Wait
+    } else {
+        Write-Host "No EXE-based uninstaller found."
     }
 }
 
@@ -80,9 +76,8 @@ function Remove-NeDriver {
     foreach ($driver in $drivers) {
         if ($driver.ContainsKey("Original Name")) {
             if (($driver['Original Name']) -eq "wintun.inf") {
+                Write-Host "Removing wintun.inf driver"
                 Start-Process -FilePath "pnputil.exe" -ArgumentList "/delete-driver $($driver['Published Name']) /uninstall /force"
-            } else {
-                Write-Host "No NE Driver found"
             }
         }
     }
