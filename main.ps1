@@ -47,6 +47,7 @@ function Uninstall-NetExtender {
     } else {
         Write-Host "No EXE-based uninstaller found."
     }
+    return
 }
 
 # Remove NE Driver
@@ -81,6 +82,7 @@ function Remove-NeDriver {
             }
         }
     }
+    return
 }
 
 # Function to install NetExtender
@@ -92,6 +94,7 @@ function Install-NetExtender {
         if (Test-Path $fullPathMsiPath) {
             Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $fullPathMsiPath /quiet /norestart" -Wait
             Write-Host "MSI installation complete."
+            return
         } else {
             Write-Error "The provided MSI installer path does not exist: $fullPathMsiPath"
             exit 1
@@ -101,6 +104,7 @@ function Install-NetExtender {
         if (Test-Path $fullExePath) {
             Start-Process -FilePath $fullExePath -ArgumentList "/S" -Wait
             Write-Host "EXE installation complete."
+            return
         } else {
             Write-Error "The provided EXE installer path does not exist: $fullExePath"
             exit 1
@@ -114,6 +118,7 @@ try {
     Remove-NeDriver
     Install-NetExtender
     Write-Host "NetExtender installation process completed successfully."
+    exit 0
 } catch {
     Write-Error "An error occurred: $_"
     exit 1
