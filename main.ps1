@@ -1,15 +1,12 @@
-# Variables
 $NetExtenderMsiPath = ".\NetExtender-x64-10.2.341.msi" # Path to the MSI installer
 $NetExtenderExePath = ".\NXSetupU-x64-10.2.341.exe"    # Path to the EXE installer
 $NetExtenderProcessName = "NEGui"                     # Process name of SonicWALL NetExtender
 $NetExtenderProductName = "SonicWALL NetExtender"     # Display name in Programs and Features
 $InstallEXE = $true
 
-# Function to uninstall NetExtender
 function Uninstall-NetExtender {
     Write-Host "Checking for existing SonicWALL NetExtender installation..."
 
-    # Look for MSI-based installations
     $InstalledApps = Get-ItemProperty 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*',
                                        'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*' |
                       Where-Object { $_.DisplayName -like "*$NetExtenderProductName*" }
@@ -50,7 +47,7 @@ function Uninstall-NetExtender {
     return
 }
 
-# Remove NE Driver
+# Remove NetExtender Driver
 function Remove-NeDriver {
     $driversOutput = pnputil.exe /enum-drivers
 
@@ -85,7 +82,6 @@ function Remove-NeDriver {
     return
 }
 
-# Function to install NetExtender
 function Install-NetExtender {
     $fullPathMsiPath = Resolve-Path $NetExtenderMsiPath
     $fullExePath = Resolve-Path $NetExtenderExePath
@@ -112,7 +108,6 @@ function Install-NetExtender {
     }
 }
 
-# Main Script Execution
 try {
     Uninstall-NetExtender
     Remove-NeDriver
